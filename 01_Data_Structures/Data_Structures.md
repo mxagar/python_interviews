@@ -66,6 +66,8 @@ def remove_even(lst):
 
 ### Challenge 2: Merge Two Sorted Lists
 
+#### Solution 1 (Mine)
+
 My first **wrong** solution: It's not enough to compare elements pairwise - each element needs to be compared against a subset of elements of the other list!
 
 ```python
@@ -104,6 +106,8 @@ def merge_lists(lst1, lst2):
             m = m + remainder
     return m
 ```
+
+#### Solution 2 (Mine)
 
 My second **correct** solution: It has some mistakes/improvements:
 - I don't need to detect the longest list.
@@ -153,6 +157,8 @@ def merge_lists(lst1, lst2):
     return m
 ```
 
+#### Solution 3 (Provided)
+
 Provided Solution 1:  Time complexity is `O(m(n+m))`, because both lists are not traversed separately.
 
 ```python
@@ -191,6 +197,8 @@ def merge_lists(lst1, lst2):
 print(merge_lists([4, 5, 6], [-2, -1, 0, 7]))
 ```
 
+#### Solution 4 (Provided)
+
 Provided Solution 2: Time complexity is `O(m(n+m))`, because both lists are not traversed separately. Also, note that `insert()` can be quadratic. However, the `extend()` function in `O(n)`.
 
 ```python
@@ -218,3 +226,138 @@ print(merge_arrays([4, 5, 6], [-2, -1, 0, 7]))
 
 ### Challenge 3: Find Two Numbers that Add up to `k`
 
+Given a list and a number `k`, find two numbers from the list that sum to `k`.
+
+#### Solution 1 (Mine)
+
+My **first** solution. It iterates the list in two (nested) for-loops, so it's `O(n^2)`:
+
+```python
+def find_sum(lst, k):
+    for i in lst:
+        r = k - i
+        for j in lst:
+            if r == j:
+                return [i,j]
+```
+
+#### Solution 2 (Mine)
+
+Another solution, suggested in the course: sort and perform a binary search! Note that:
+- `.sort()` is used; since most optimal sorting functions take `O(nlogn)`, we assume it here, too
+- Binary search takes `O(logn)`
+- Thus: total time: `O(nlogn)`
+
+The following is my approach for binary seach after sorting. I made a **huge mistake**: I forgot checking whether the searched item is in the left or right part of the list (which is why I sort and perform binary search!). Now it's corrected.
+
+```python
+# O(logn)
+def binary_search(lst_sorted, item):
+	length = len(lst_sorted)
+	span = int(length / 2) # floor
+	found = False
+	if span < 2:
+		# length = 1 | 2 | 3
+		# span = 0 | 1
+		if lst_sorted[0] == item:
+			found = True
+		if span == 1 and (item > lst_sorted[0]):
+			# We have already checked lst_sorted[0]
+			# Now we check lst_sorted[1], lst_sorted[2]
+			found = binary_search(lst_sorted[1:], item)
+	else:
+		# length > 3
+		# span > 1
+		if item <= lst_sorted[span]:
+			found = binary_search(lst_sorted[:(span+1)], item)
+		else:	
+			found = binary_search(lst_sorted[(span+1):], item)
+	return found
+
+def find_sum(lst, k):
+	# We assume sort() works at O(nlogn)
+	lst.sort() # inplace, returns None; sort() wort return a sorted list
+	# lst_sorted = sort(lst)
+	for i in lst:
+		r = k - i
+		found = binary_search(lst, r)
+		if found:
+			return [i, r]
+```
+
+### Solution 3 (Provided)
+
+The following solution provided in the course uses sorting + binary search; while ny approach used recursion, this approach uses an iterative method.
+This approach returns additionally the index where the item is found.
+
+```python
+def binary_search(a, item):
+    first = 0
+    last = len(a) - 1
+    found = False
+    index = -1
+    while first <= last and not found:
+        mid = (first + last) // 2 # integer/floor division
+        if a[mid] == item:
+            index = mid
+            found = True
+        else:
+        	# Take the boundaries of the list half
+        	# that can contain item
+            if item < a[mid]:
+                last = mid - 1
+            else:
+                first = mid + 1
+    if found:
+        return index
+    else:
+        return -1
+
+def find_sum(lst, k):
+    lst.sort()
+    for j in range(len(lst)):
+        # find the difference in list through binary search
+        # return the only if we find an index
+        index = binary_search(lst, k -lst[j])
+        if index is not -1 and index is not j:
+            return [lst[j], k -lst[j]]
+    
+print(find_sum([1, 5, 3], 2))
+print(find_sum([1, 2, 3, 4], 5))
+```
+
+#### Solution 4 (Provided)
+
+Provided solution, using moving indices after having ordered the list. The list is traversed start->end and end<-start simultaneously. Since th elist is ordered, we can compute the sum of the items at each step and move indices accordingly. This solution is `O(nlogn)`: sorting `O(nlogn)` and traversing `O(n)`. However, it's not the optimal approach; the optimal approach consists in using hashing (see Challenge 8).
+
+```python
+def find_sum(lst, k):
+    # sort the list
+    lst.sort()
+    index1 = 0
+    index2 = len(lst) - 1
+    result = []
+    sum = 0
+    # iterate from front and back
+    # move accordingly to reach the sum to be equal to k
+    # returns false when the two indices meet
+    while (index1 != index2):
+        sum = lst[index1] + lst[index2]
+        if sum < k:
+            index1 += 1
+        elif sum > k:
+            index2 -= 1
+        else:
+            result.append(lst[index1])
+            result.append(lst[index2])
+            return result
+    return False
+
+
+print(find_sum([1, 2, 3, 4], 5))
+print(find_sum([1, 2, 3, 4], 2))
+```
+
+### Challenge 4
+
+Given a list, modify it so that each index stores the product of all elements in the list except the element at the index itself.
