@@ -23,6 +23,13 @@ No guarantees
 
 1. Lists
 2. Linked lists
+3. Stacks and Queues
+4. Trees
+5. Tries
+6. Graphs
+7. Heaps
+8. Hash Tables
+
 
 ## 1. Lists
 
@@ -361,3 +368,94 @@ print(find_sum([1, 2, 3, 4], 2))
 ### Challenge 4
 
 Given a list, modify it so that each index stores the product of all elements in the list except the element at the index itself.
+
+#### Solution 1: Naive approach (Mine)
+
+```python
+def find_product(lst):
+    arr = []
+    for i in range(len(lst)):
+        item = 1
+        for j in range(len(lst)):
+            if j != i:
+                item *= lst[j]
+        arr.append(item)
+    return arr
+```
+
+#### Solution 2: Keeping Track of Previous Products (Mine)
+
+```python
+def find_product(lst):
+    arr = list(range(len(lst)))
+    previous_non_zero = -1
+    for i in range(len(lst)):
+        item = 1
+        if previous_non_zero != -1:
+            # arr[previous_non_zero] != 0 by definition
+            # lst[i] != 0 if previous_non_zero != -1
+            item = lst[previous_non_zero] * (arr[previous_non_zero] / lst[i])
+        else: # previous_non_zero == -1
+            for j in range(len(lst)):
+                if j != i:
+                    if lst[j] != 0:
+                        item *= lst[j]
+                    else:
+                        item = 0
+                        break
+        arr[i] = item
+        if item != 0:
+            previous_non_zero = i
+    return arr
+```
+
+#### Solutuon 3: Left Side Product Tracked (Provided)
+
+We track the prodcut of the left side and compute for each item the product of the right side.  
+Thus, we have two for loops: a loop fpr all items and a loop for the items on the right side.
+
+The complexity is `O(n^2)`.
+
+```python
+def find_product(lst):
+    result = []
+    left = 1  # To store product of all previous values from currentIndex
+    for i in range(len(lst)):
+        currentproduct = 1  # To store current product for index i
+        # compute product of values to the right of i index of list
+        for ele in lst[i+1:]:
+            currentproduct = currentproduct * ele
+        # currentproduct * product of all values to the left of i index
+        result.append(currentproduct * left)
+        # Updating `left`
+        left = left * lst[i]
+
+    return result
+```
+
+#### Solution 4: Product from Left Multiplied by Product from Right (Provided)
+
+Very nice solution: first the products from the left are computed by tracking them; then the sam eis done from the right!
+
+We just traverse 2x the list, without nested for loops; thus, the time complexity is `O(n)`!
+
+```python
+def find_product(lst):
+    # get product start from left
+    left = 1
+    product = []
+    for ele in lst:
+        product.append(left)
+        left = left * ele
+    # get product starting from right
+    right = 1
+    for i in range(len(lst)-1, -1, -1):
+        product[i] = product[i] * right
+        right = right * lst[i]
+
+    return product
+```
+
+### Challenge 5: Find Minimum Value in List
+
+Given a list of `n` integers, find the minimum value in the list.
