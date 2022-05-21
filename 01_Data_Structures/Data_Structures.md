@@ -459,3 +459,139 @@ def find_product(lst):
 ### Challenge 5: Find Minimum Value in List
 
 Given a list of `n` integers, find the minimum value in the list.
+
+#### Solution 1: Iterate all Elements and Track Minimum (Mine)
+
+Very easy - so easy I though I didn't understand the task. `O(n)`.
+
+```python
+def find_minimum(arr):
+    if len(arr) > 0:
+        min_value = arr[0]
+        for i in range(1,len(arr)):
+            if arr[i] < min_value:
+                min_value = arr[i]
+        return min_value
+    else:
+        return None
+```
+
+#### Solution 2: Sort the List and Take First Element (Suggested)
+
+I don't quite understand why the suggest this as a solution, since it's more complex and it takes `O(nlogn)`.
+
+Merge Sort Algorithm:
+
+- `O(nlogn)`
+- Can be used on any traversable structure
+- Divide list/array in halves recursuvely top-down
+- Bottom-up: sort elemenst and merge
+
+Merge sort implemented by me:
+
+```python
+def find_minimum(lst):
+    if len(lst) > 0:
+        lst_sorted = merge_sort(lst)
+        return lst_sorted[0]
+    else:
+        return None
+
+def merge_sort(lst):
+    # Merge Sort by Me
+    length = len(lst)
+    if length > 1:
+        # Split
+        half = length // 2 # int division, floor        
+        left = lst[:half]
+        right = lst[half:]
+        left_sorted = merge_sort(left)
+        right_sorted = merge_sort(right)
+        # Merge: 2 ordered lists
+        # We advance in 3 arrays, and compare left-right
+        # elements one by one;
+        # then, rest needs to be appended
+        arr = [None] * length
+        i = 0
+        j = 0
+        k = 0
+        while i < (half) and j < (length-half):
+            if left_sorted[i] < right_sorted[j]:
+                arr[k] = left_sorted[i]
+                i += 1
+            else:
+                arr[k] = right_sorted[j]
+                j += 1
+            k += 1
+        # Append reminder: could be either right or left!
+        if i != half:
+            arr[k:] = left_sorted[i:]
+        elif j != (length-half):
+            arr[k:] = right_sorted[j:]
+        return arr
+    else:
+        return lst
+
+print(find_minimum([0, 10, 1, -1, -2]))
+```
+
+Merge sort as provided:
+
+
+```python
+def merge_sort(my_list):
+    if len(my_list) > 1:
+        mid = len(my_list) // 2
+        left = my_list[:mid]
+        right = my_list[mid:]
+
+        # Recursive call on each half
+        merge_sort(left)
+        merge_sort(right)
+
+        # Two iterators for traversing the two halves
+        i = 0
+        j = 0
+        
+        # Iterator for the main list
+        k = 0
+        
+        while i < len(left) and j < len(right):
+            if left[i] < right[j]:
+              # The value from the left half has been used
+              my_list[k] = left[i]
+              # Move the iterator forward
+              i += 1
+            else:
+                my_list[k] = right[j]
+                j += 1
+            # Move to the next slot
+            k += 1
+
+        # For all the remaining values
+        while i < len(left):
+            my_list[k] = left[i]
+            i += 1
+            k += 1
+
+        while j < len(right):
+            my_list[k]=right[j]
+            j += 1
+            k += 1
+
+
+def find_minimum(lst):
+    if (len(lst) <= 0):
+        return None
+    merge_sort(lst)  # sort list
+    return lst[0]  # return first element
+```
+
+### Challenge 7: Find Second Maximum Value in a List
+
+(There seems to be no Challenge 6)
+
+Given a list of size `n`, find the second maximum element in the list.
+
+
+
