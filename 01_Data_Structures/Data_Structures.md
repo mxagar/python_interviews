@@ -33,6 +33,8 @@ No guarantees
 
 ## 1. Lists
 
+Note: in python, lists are like arrays; this is abit confusing, since I would have said lists are (linked) lists.
+
 ### Lists: Definition
 
 - Sequences of elements of ddifferent type
@@ -593,5 +595,154 @@ def find_minimum(lst):
 
 Given a list of size `n`, find the second maximum element in the list.
 
+#### Solution 1 (Mine): Traverse the list once and track both the max and the 2nd max
 
+The solution is straightforward; the only issue are the edge cases and the fact that we need to swap the old max if a bigger one is found.  
+Time complexity: `O(n)`
+
+```python
+def find_second_maximum(lst):
+    if len(lst) < 1:
+        return None
+    elif len(lst) < 2:
+        return lst[0]
+    else:
+        # Pick first 2 elements
+        if lst[0] > lst[1]:
+            max_1 = lst[0]
+            max_2 = lst[1]
+        else:
+            max_1 = lst[1]
+            max_2 = lst[0]
+        if len(lst) > 2:
+            # Loop in rest of array
+            for i in range(2,len(lst)):
+                if lst[i] > max_1:
+                    # Keep old max as 2nd max
+                    max_2 = max_1
+                    max_1 = lst[i]
+                elif lst[i] > max_2:
+                    max_2 = lst[i]
+        return max_2 
+```
+
+#### Provided Solutions
+
+Three solutions are provided: one similar to mine, the other two worse:
+
+- Sort list and index second max.
+- Traverse list twice: first to get the max, second to get the second biggest.
+
+Solution similar to mine:
+
+```python
+def find_second_maximum(lst):
+   if (len(lst) < 2):
+       return
+   # initialize the two to infinity
+   max_no = second_max_no = float('-inf')
+   for i in range(len(lst)):
+       # update the max_no if max_no value found
+       if (lst[i] > max_no):
+           second_max_no = max_no
+           max_no = lst[i]
+       # check if it is the second_max_no and not equal to max_no
+       elif (lst[i] > second_max_no and lst[i] != max_no):
+           second_max_no = lst[i]
+   if (second_max_no == float('-inf')):
+       return
+   else:
+       return second_max_no
+```
+
+Note: notice the use of `float(-inf)`.
+
+### Challenge 8: Right Rotate List
+
+Given a list of length `n` rotate its elements by `k` indices from right to left.
+
+#### Solution 1: Cut left & right and swap + fill gaps (Mine)
+
+I spent more than expected with this challenges because I often mess up with slicing indices.
+
+The concept is easy: I cut at `k` the left and right parts and I swap them; since we're going to have gaps or too long lists, they need to be further cut to make them fit. The time complexity is `O(n)` worst case, assuming that the slicing needs to go through all elements.
+
+```python
+def right_rotate(lst, k):
+    if len(lst) < 1:
+        return lst
+    else:
+        if k >= len(lst):
+            # Pick the division rest / modulo
+            k = k % len(lst)
+        if k == 0:
+            return lst
+        else:
+            # Initialize memory
+            arr = [None] * len(lst)
+            # Cut list
+            lst_left = lst[:k] # k
+            lst_right = lst[k:] # len(lst) - k
+            # Left is shifted to position k
+            # We choose to break lst_left or lst_right
+            # depending on their sizes.
+            if len(lst) - k - len(lst_left) >= 0: # len(lst_left) = k
+                # lst_left is too short (or perfect) to fill
+                # the right of arr; break lst_right if lst_left too shot
+                # Empty space length on arr_right
+                diff = len(lst) - k - len(lst_left)
+                # arr_right
+                arr[k:] = lst_left + lst_right[:diff]
+                # arr_left
+                arr[:k] = lst_right[diff:]
+            else:
+                # lst_left is larger
+                # than the right of arr, or the same size
+                # Too much length on arr_right
+                break_left = len(lst_right) # len(lst) - k
+                # arr_right
+                arr[k:] = lst_left[:break_left]
+                # arr_left
+                arr[:k] = lst_left[break_left:] + lst_right
+
+            return arr
+```
+
+#### Solution 2: Manual Rotation (Provided)
+
+Time complexity: `O(n)`.
+
+```python
+def right_rotate(lst, k): 
+    if len(lst) == 0:
+        k = 0
+    else:
+        k = k % len(lst)
+    rotatedList = []
+    # get the elements from the end
+    for item in range(len(lst) - k, len(lst)):
+        rotatedList.append(lst[item])
+    # get the remaining elements
+    for item in range(0, len(lst) - k):
+        rotatedList.append(lst[item])
+    return rotatedList
+```
+
+#### Solution 3: Pythonic Rotation
+
+Very elegant. Think in python!
+
+```python
+def right_rotate(lst, k):
+    # get rotation index
+    if len(lst) == 0:
+        k = 0
+    else:
+        k = k % len(lst)
+    return lst[-k:] + lst[:-k]
+```
+
+### Challenge 9: Re-Arrange Positive and Negative Values
+
+Given a list of `n` elements, rearrange its elements in such a way that the negative elements appear at one end and positive elements appear at the other.
 
