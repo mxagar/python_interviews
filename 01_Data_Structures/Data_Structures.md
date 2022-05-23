@@ -746,3 +746,224 @@ def right_rotate(lst, k):
 
 Given a list of `n` elements, rearrange its elements in such a way that the negative elements appear at one end and positive elements appear at the other.
 
+#### Solution 1: Loop List and Create 2 Lists to Concatenate Them (Mine)
+
+Straightforward, using auxiliary lists.
+
+Time complexity: `O(n)`.
+
+```python
+def rearrange(lst):
+    left = []
+    right = []
+    for item in lst:
+        if item < 0:
+            left.append(item)
+        else:
+            right.append(item)
+    return left+right
+```
+
+#### Solution 2: Re-Arrange in Place (Suggested, Mine + Provided)
+
+```python
+def swap(l,r,lst):
+    # Since list is a mutable,
+    # we pass by value its reference;
+    # thus, we can change its elemenets with 'append(), []'
+    # and it's reflected outside.
+    # But if we re-assign its values 'lst = [...]'
+    # it won't be reflected unless we do 'return lst'
+    tmp = lst[l]
+    lst[l] = lst[r]
+    lst[r] = tmp
+
+def rearrange(lst):
+    last_negative = -1
+    for i in range(len(lst)):
+        if lst[i] < 0:
+            last_negative += 1
+            swap(last_negative,i,lst)
+    return lst
+```
+
+The answer can be more pythonic using tuple unpacking!  
+We don't need to use `tmp` in `swap()`!
+
+```python
+def rearrange(lst):
+    leftMostPosEle = 0  # index of left most element
+    # iterate the list
+    for curr in range(len(lst)):
+        # if negative number
+        if lst[curr] < 0:
+            # if not the last negative number
+            if curr != leftMostPosEle:
+                # swap the two
+                lst[curr], lst[leftMostPosEle] = lst[leftMostPosEle], lst[curr]
+            # update the last position
+            leftMostPosEle += 1
+    return lst
+```
+
+#### Solution 3: Pythonic Auxiliary Lists (Provided)
+
+```python
+def rearrange(lst):
+    # get negative and positive list after filter and then merge
+    return [i for i in lst if i < 0] + [i for i in lst if i >= 0]
+```
+
+### Challenge 10: Rearrange Sorted List in Max/Min Form
+
+Arrange elements in such a way that the maximum element appears at first position, then minimum at second, then second maximum at third and second minimum at fourth and so on.
+
+```
+[1,2,3,4,5] -> [5,1,4,2,3]
+```
+
+#### Solution 1: Sort + Iterate in Both Directions (Mine)
+
+One solution is to sort the list and then iterate over its elements from both ends.
+
+Time complexity: sort `O(nlog)` + `O(n)` iterate on both ends -> `O(nlogn)`.
+
+Note: I didn't read it, but the list is supposed to be ordered already.  
+Thus, we don't need the `merge_sort()`.
+
+```python
+def merge_sort(lst):
+    if len(lst) < 2:
+        return lst
+    else:
+        # Split
+        mid = len(lst) // 2 # floor
+        left = lst[:mid]
+        right = lst[mid:]
+        # Sort each half
+        left_sorted = merge_sort(left)
+        right_sorted = merge_sort(right)
+        # Merge 
+        i, j = 0, 0
+        k = 0
+        lst_sorted = [None] * len(lst)
+        #while i in range(len(left_sorted)) and j in range(len(right_sorted)):
+        while i < len(left_sorted) and j < len(right_sorted):
+            if left_sorted[i] < right_sorted[j]:
+                lst_sorted[k] = left_sorted[i]
+                i += 1
+            else:
+                lst_sorted[k] = right_sorted[j]
+                j += 1
+            k += 1
+        # Add remainder
+        if i < len(left_sorted):
+            # We have not taken all items from left_sorted
+            # instead, all from right_sorted were taken.
+            # This cannot happen! But anyways
+            lst_sorted[k:] = left_sorted[i:]
+        elif j < len(right_sorted):
+            # We have not taken all items from right_sorted
+            # instead, all from left_sorted were taken.
+            lst_sorted[k:] = right_sorted[j:]
+        
+        return lst_sorted
+
+def max_min(lst):
+	# Sort
+    lst_sorted = merge_sort(lst)
+    
+    # Iterate in both directions and pick max & min
+    min_max_lst = [None] * len(lst_sorted)
+    i = 0
+    l, r = 0, len(lst_sorted)-1
+    while i < len(lst_sorted) and l < len(lst_sorted) and r > -1:
+        if i % 2 == 0:
+            # even: max
+            min_max_lst[i] = lst_sorted[r]
+            r -= 1
+        else:
+            # odd: min
+            min_max_lst[i] = lst_sorted[l]
+            l += 1
+        i += 1
+
+    # Check and add remainder
+    # We really don't need this, 
+    # because we keep picking values
+    # until i == len(lst_sorted) occurs 
+    #if l < len(lst_sorted) and r == -1:
+    #    # l is yet to be finished
+    #    min_max_lst[i:] = lst_sorted[l:]
+    #elif r > -1 and l == len(lst_sorted):
+    #    # r is yet to be finished
+    #    min_max_lst[i:] = lst_sorted[r::-1] # invert [:r]
+
+    return min_max_lst
+
+```
+
+#### Solution 2: Iterate in Two Directions Simultanously in a Pythonic Way (Provided)
+
+This solution is similar to mine, but the pythonic way of accessing backwards is exploited: `lst[-i] == lst[len(lst)-i], i > 0`.
+
+Time complexity: `O(n)`.
+
+```python
+def max_min(lst):
+    result = []
+    # iterate half list
+    for i in range(len(lst)//2):
+        # Append corresponding last element: max
+        result.append(lst[-(i+1)])
+        # append current element: min
+        result.append(lst[i])
+    if len(lst) % 2 == 1:
+        # if middle value then append: it will be last min
+        result.append(lst[len(lst)//2])
+    return result
+```
+
+#### Solution 3: Modulus Operator
+
+The modulus operator `%` has two very interesting properties. Take the ordered list `lst = [1, 2, 3, 4, 5, 6]`; if we take `max = lst[-1] + 1`, then this is true
+
+1. `lst[i] % max == lst[i]`, for any `i in range(len(lest))`
+2. `lst[i] + max*k % max == lst[i]`, for any `i in range(len(lest))` and any integer `k > 0`
+
+These properties are exploited to perform the following; lest consider `lst[0]`: 
+
+> We need to store 6 at index 0 , since that is the maximum value in the list. Multiply 6 with 7 and add lst[0] to it, we get 7 * 6 + 1 = 43. For our last trick, when we apply 43 % 7, we get back the original 1. At the same time, if we divide divide 43 by 7, we get back 6.
+> This is the line `lst[i] += (lst[maxIdx] % maxElem) * maxElem`.
+
+Thus, 43 stores both the new element and the old! `43/7 = 6`, `43%7 = 1`.
+
+```python
+def max_min(lst):
+    # Return empty list for empty list
+    if (len(lst) is 0):
+        return []
+
+    maxIdx = len(lst) - 1  # max index
+    minIdx = 0  # first index
+    maxElem = lst[-1] + 1  # Max element
+    # traverse the list
+    for i in range(len(lst)):
+        # even number means max element to append
+        if i % 2 == 0:
+            lst[i] += (lst[maxIdx] % maxElem) * maxElem
+            maxIdx -= 1
+        # odd number means min number
+        else:
+            lst[i] += (lst[minIdx] % maxElem) * maxElem
+            minIdx += 1
+
+    for i in range(len(lst)):
+        lst[i] = lst[i] // maxElem
+    return lst
+
+```
+
+### Challenge 11: Maximum Sum Sublist
+
+Given an array, find the contiguous sublist with the largest sum.
