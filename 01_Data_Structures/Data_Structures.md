@@ -48,7 +48,7 @@ l1 = l[0:2] # [1, 2, 3]
 l2 = l[2:4] # [4, 5]
 l3 = l1 + l2 # [1, 2, 3, 4, 5]
 for i in l:
-	print(i)
+    print(i)
 ```
 
 ### Challenge 1: Remove Even Integers from List
@@ -68,8 +68,8 @@ Solution 2: List Comprehensions, `O(n)`. This is is the preferred one, because i
 
 ```python
 def remove_even(lst):
-	# newList = [expression(i) for i in oldList if filter(i)]
-	# squared_x = [x**2 for x in lst if x % 2 != 0]
+    # newList = [expression(i) for i in oldList if filter(i)]
+    # squared_x = [x**2 for x in lst if x % 2 != 0]
     return [number for number in lst if number % 2 != 0]
 ```
 
@@ -152,13 +152,13 @@ def merge_lists(lst1, lst2):
         for i in range(len(lstA)):
             # Traverse rest of lstB/m (longest)
             for j in range(last_insertion_B + 1, len(m)):
-            	# if current A item is smaller, insert it
+                # if current A item is smaller, insert it
                 if lstA[i] <= m[j]:
                     m.insert(j, lstA[i])
                     last_insertion_B = j
                     # Break, otherwise inserted for the rest again!
                     break
- 				# Edge case: we are at the end of m
+                # Edge case: we are at the end of m
                 elif j == len(m) - 1:
                     m.append(lstA[i])
                     last_insertion_B = len(m) - 1
@@ -262,36 +262,36 @@ The following is my approach for binary seach after sorting. I made a **huge mis
 ```python
 # O(logn)
 def binary_search(lst_sorted, item):
-	length = len(lst_sorted)
-	span = int(length / 2) # floor
-	found = False
-	if span < 2:
-		# length = 1 | 2 | 3
-		# span = 0 | 1
-		if lst_sorted[0] == item:
-			found = True
-		if span == 1 and (item > lst_sorted[0]):
-			# We have already checked lst_sorted[0]
-			# Now we check lst_sorted[1], lst_sorted[2]
-			found = binary_search(lst_sorted[1:], item)
-	else:
-		# length > 3
-		# span > 1
-		if item <= lst_sorted[span]:
-			found = binary_search(lst_sorted[:(span+1)], item)
-		else:	
-			found = binary_search(lst_sorted[(span+1):], item)
-	return found
+    length = len(lst_sorted)
+    span = int(length / 2) # floor
+    found = False
+    if span < 2:
+        # length = 1 | 2 | 3
+        # span = 0 | 1
+        if lst_sorted[0] == item:
+            found = True
+        if span == 1 and (item > lst_sorted[0]):
+            # We have already checked lst_sorted[0]
+            # Now we check lst_sorted[1], lst_sorted[2]
+            found = binary_search(lst_sorted[1:], item)
+    else:
+        # length > 3
+        # span > 1
+        if item <= lst_sorted[span]:
+            found = binary_search(lst_sorted[:(span+1)], item)
+        else:   
+            found = binary_search(lst_sorted[(span+1):], item)
+    return found
 
 def find_sum(lst, k):
-	# We assume sort() works at O(nlogn)
-	lst.sort() # inplace, returns None; sort() wort return a sorted list
-	# lst_sorted = sort(lst)
-	for i in lst:
-		r = k - i
-		found = binary_search(lst, r)
-		if found:
-			return [i, r]
+    # We assume sort() works at O(nlogn)
+    lst.sort() # inplace, returns None; sort() wort return a sorted list
+    # lst_sorted = sort(lst)
+    for i in lst:
+        r = k - i
+        found = binary_search(lst, r)
+        if found:
+            return [i, r]
 ```
 
 ### Solution 3 (Provided)
@@ -311,8 +311,8 @@ def binary_search(a, item):
             index = mid
             found = True
         else:
-        	# Take the boundaries of the list half
-        	# that can contain item
+            # Take the boundaries of the list half
+            # that can contain item
             if item < a[mid]:
                 last = mid - 1
             else:
@@ -870,7 +870,7 @@ def merge_sort(lst):
         return lst_sorted
 
 def max_min(lst):
-	# Sort
+    # Sort
     lst_sorted = merge_sort(lst)
     
     # Iterate in both directions and pick max & min
@@ -966,4 +966,157 @@ def max_min(lst):
 
 ### Challenge 11: Maximum Sum Sublist
 
-Given an array, find the contiguous sublist with the largest sum.
+Given an array, find the contiguous sublist (contiguous elements) with the largest sum; the list might have negative numbers anywhere.
+
+#### Solution 1: Find First Positive and Expand (Mine)
+
+This solution seems to work, but it would not work in all cases.
+
+For instance: `[10, -1, -1, -1, 100]`: the maximum sublist is the entire array: `117`; however, `100` is returned.
+
+One fix would be to colapse all positive and negative sublists and find the maximum on that collapsed list?
+
+My algorithmin `O(n)`
+
+```python
+def find_max_sum_sublist(lst): 
+    # Check if all are negative / 0
+    max_number = lst[0]
+    first_positive = -1
+    for i in range(len(lst)):
+        if lst[i] > 0:
+            first_positive = i
+            break
+        else:
+            if lst[i] > max_number:
+                max_number = lst[i]
+    if first_positive < 0:
+        return max_number
+    
+    # If here, there are >0 elements
+    # ie., first_positive > -1
+    
+    start = first_positive
+    end = first_positive+1
+    s = lst[start]
+    sublists = []
+    negatives = []
+    if end == len(lst):
+        # We reached end
+        return s
+    else:
+        for i in range(start,len(lst)):
+            # start is defined, find end
+            s = lst[start]
+            for j in range(start+1,len(lst)):
+                if lst[j] > 0:
+                    # extend end
+                    s += lst[j]
+                    end = j+1
+                else:
+                    # one sublist found
+                    end = j
+                    negatives.append((j, lst[j]))
+                    break
+            sublists.append((start, end, s))
+            start = end+1
+            # Check we're not at the end
+            if start > len(lst):
+                break
+            else:
+                # Find next first positive == start
+                for j in range(start,len(lst)):
+                    if lst[j] > 0:
+                        start = j
+                        break
+                    else:
+                        negatives.append((j, lst[j]))
+        # We have all sublists and their sums
+        max_sum = -1
+        for start, end, s in sublists:
+            if max_sum < s:
+                max_sum = s
+        return max_sum
+```
+
+#### Solution 2: Kanade's Algorithm (Dynamic Programming)
+
+Elegant way of computing the contiguoous sublist with the maxiumum sum, `O(n)`.
+
+A global best option is tracked as well as a current sublist sum.
+
+We scan the entire list and at each position find the maximum sum of the sublist ending there.
+
+```python
+def find_max_sum_sublist(lst): 
+    if (len(lst) < 1): 
+        return 0;
+
+    curr_max = lst[0];
+    global_max = lst[0];
+    length_array = len(lst);
+    for i in range(1, length_array):
+        if curr_max < 0: 
+            curr_max = lst[i]
+        else:
+            curr_max += lst[i]
+        if global_max < curr_max:
+            global_max = curr_max
+
+    return global_max;
+```
+
+### Notes
+
+- The objects of lists themselves are stored in random memory locations whereas the pointers that make up the list are stored in sequential locations.
+- Difference between arrays and python lists: Python lists are not type specific
+- Functions receive arguments by value, but pointers of objects are passed, so we can modify outer lists; exception: if we reassign teh value of a list, it's not reflected outside
+
+```python
+def foo(value, lst):
+    value = 1
+    lst[0] = 44
+
+v = 3
+lst = [1, 2, 3]
+foo(v, lst)
+print(v, lst[0]) # 3 44
+```
+
+- What will output this?
+
+```python
+list = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
+def foo(m):
+  v = m[0][0]
+  for row in m:
+    for element in row:
+      if v < element: v = element
+  return v
+
+print(foo(list[0])) # 4
+```
+
+- What will output this?
+
+```python
+def f(i, values = []):
+    values.append(i)
+    print (values),
+    return values
+f(1) # [1]
+f(2) # [1, 2]
+f(3) # [1, 2, 3]
+```
+
+- What should output this?
+
+```python
+lst = [[1, 2, 3, 4],
+       [4, 5, 6, 7],
+       [8, 9, 10, 11],
+       [12, 13, 14, 15]]
+
+for i in range(0, 4):
+    print(lst[i].pop()) # 4 7 11 15
+```
