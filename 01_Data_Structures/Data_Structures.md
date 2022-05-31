@@ -1120,3 +1120,38 @@ lst = [[1, 2, 3, 4],
 for i in range(0, 4):
     print(lst[i].pop()) # 4 7 11 15
 ```
+
+## 2. Linked lists
+
+In python, there is no native linked list structure, so we need to implement them.
+
+Structure of a linked list:
+
+![Linked List Structure](./pics/linked_list.png)
+
+We have nodes, which contain the data and a pointer to the next node; if we have only a pointer to the next node, we have a singly linked list, i.e., we can do only a unidirectional traverse.
+
+The implementation is realized with two classes: `Node` and `LinkedList`.
+
+```python
+class Node:
+    def __init__(self, data):
+        self.data = data  # Data field
+        self.next_element = None  # Pointer to next node
+
+# To be extended...
+class LinkedList:
+    def __init__(self):
+        self.head_node = None
+```
+
+### 2.1 Performance Comparison: List vs. Linked List
+
+In lists (arrays), elements are stored contiguously, while in linked lists successive elements might be anywhere in memory (thus, we need to pointers).
+
+In python, the insertion/deletion (`append() / pop()`) of elements at the tail of a list is `O(1)`; I understand that's because it is amortized time (i.e., the capacity is doubled when exceeded). Thus, the only advantage of linked lists compared to lists would be `O(1)` insertion at any random position.
+
+![Lists vs. Linked Lists: Operation Performance](./pics/list_vs_linked_list.png)
+
+
+### 2.2
