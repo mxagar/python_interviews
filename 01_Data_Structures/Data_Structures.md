@@ -37,7 +37,7 @@ Note: in python, lists are like arrays; this is abit confusing, since I would ha
 
 ### Lists: Definition
 
-- Sequences of elements of ddifferent type
+- Sequences of elements of different type
 - Slicing: inclusive start, exclusive end
 - For loops on lists
 - Concatenation
