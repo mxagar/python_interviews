@@ -1,10 +1,8 @@
 # Software Engineering Interview Questions in Python
 
-This repository deals with data structures, algorithms, software design & Co. in python.
+This repository was supposed to be a guide on data structures, algorithms, software design & Co. in Python. However, it is incomplete.
 
-I created it while following the learning path [Ace the Python Coding Interview](https://www.educative.io/path/ace-python-coding-interview) in [educative.io](educative.io).
-
-The path is divided in 7 modules, which I will add as I complete them:
+I started to create it while following the learning path [Ace the Python Coding Interview](https://www.educative.io/path/ace-python-coding-interview) in [educative.io](educative.io). The path is divided in 7 modules, which I will add as I complete them:
 
 1. Data Structures
 2. Algorithms
@@ -14,9 +12,12 @@ The path is divided in 7 modules, which I will add as I complete them:
 6. System Design
 7. Concurrency
 
-Each module should have a folder with a guide in it.
+:warning: **However, I decided to discontinue this respository**.
 
-Another related repository of mine is [data_structures_algorithms_udemy](https://github.com/mxagar/data_structures_algorithms_udemy). I created that repository while following the Udemy course [Python for Algorithms, Data-Structures, and Interviews](https://www.udemy.com/course/python-for-data-structures-algorithms-and-interviews), by J.M. Portilla. However, that repository is more of a sandbox where I try things, so if don't expect it to be tidy and 100% PEP8-compliant :stuck_out_tongue_winking_eye:.
+Analternative repositories of mine which cover some of the related topics are:
+
+- [data_structures_algorithms_udemy](https://github.com/mxagar/data_structures_algorithms_udemy). I created that repository while following the Udemy course [Python for Algorithms, Data-Structures, and Interviews](https://www.udemy.com/course/python-for-data-structures-algorithms-and-interviews), by J.M. Portilla.
+- [design_patterns_notes](https://github.com/mxagar/design_patterns_notes). I created that repository while following the Udemy course [Design Patterns in Python](https://www.udemy.com/course/design-patterns-python/), by D. Nesteruk.
 
 Mikel Sagardia, 2022.  
 No guarantees
