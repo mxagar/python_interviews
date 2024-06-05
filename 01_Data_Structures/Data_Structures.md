@@ -16,6 +16,13 @@ The path is divided in 7 modules:
 
 This file deals with the first module: **Data Structures**.
 
+:warning: **However, note that I decided to discontinue this respository**.
+
+Analternative repositories of mine which cover some of the related topics are:
+
+- [data_structures_algorithms_udemy](https://github.com/mxagar/data_structures_algorithms_udemy). I created that repository while following the Udemy course [Python for Algorithms, Data-Structures, and Interviews](https://www.udemy.com/course/python-for-data-structures-algorithms-and-interviews), by J.M. Portilla.
+- [design_patterns_notes](https://github.com/mxagar/design_patterns_notes). I created that repository while following the Udemy course [Design Patterns in Python](https://www.udemy.com/course/design-patterns-python/), by D. Nesteruk.
+
 Mikel Sagardia, 2022.
 No guarantees
 
